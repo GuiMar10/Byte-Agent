@@ -1,0 +1,50 @@
+{
+  "name": "byte",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A feature-rich AI chat desktop application",
+  "main": "electron/main.cjs",
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently -k \"vite --port 5173\" \"wait-on http://localhost:5173 && electron .\"",
+    "build": "vite build",
+    "dist": "vite build && electron-builder --linux",
+    "preview": "vite preview"
+  },
+  "build": {
+    "appId": "com.byte.app",
+    "productName": "Byte",
+    "files": [
+      "dist/**/*",
+      "electron/**/*"
+    ],
+    "directories": {
+      "output": "release"
+    },
+    "linux": {
+      "target": ["AppImage"],
+      "category": "Utility"
+    }
+  },
+  "dependencies": {
+    "electron-store": "^11.0.2",
+    "highlight.js": "^11.11.1",
+    "katex": "^0.16.37",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-markdown": "^10.1.0",
+    "rehype-highlight": "^7.0.2",
+    "rehype-katex": "^7.0.1",
+    "remark-gfm": "^4.0.1",
+    "remark-math": "^6.0.0",
+    "uuid": "^13.0.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.5.2",
+    "concurrently": "^9.2.1",
+    "electron": "^40.8.0",
+    "electron-builder": "^26.8.1",
+    "vite": "^7.3.1",
+    "wait-on": "^9.0.4"
+  }
+}

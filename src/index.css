@@ -1,0 +1,239 @@
+/* ═══════════════════════════════════════════════════════════════
+   Byte — Design System
+   ═══════════════════════════════════════════════════════════════ */
+
+@import 'katex/dist/katex.min.css';
+@import 'highlight.js/styles/github-dark.min.css';
+
+/* ─── CSS Custom Properties ─── */
+:root {
+  /* Colors — Dark theme (default) */
+  --bg-primary: #0a0a0f;
+  --bg-secondary: #12121a;
+  --bg-tertiary: #1a1a26;
+  --bg-elevated: #222233;
+  --bg-hover: #2a2a3d;
+  --bg-active: #33334d;
+  --bg-input: #16161f;
+
+  --text-primary: #e8e8ed;
+  --text-secondary: #9898a8;
+  --text-tertiary: #6b6b7d;
+  --text-inverse: #0a0a0f;
+
+  --accent: #6c63ff;
+  --accent-hover: #7b73ff;
+  --accent-muted: rgba(108, 99, 255, 0.15);
+  --accent-glow: rgba(108, 99, 255, 0.3);
+
+  --success: #34d399;
+  --warning: #fbbf24;
+  --error: #f87171;
+
+  --border: rgba(255, 255, 255, 0.06);
+  --border-strong: rgba(255, 255, 255, 0.12);
+  --border-accent: rgba(108, 99, 255, 0.4);
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
+  --shadow-glow: 0 0 20px rgba(108, 99, 255, 0.15);
+
+  /* Typography */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+
+  --text-xs: 0.7rem;
+  --text-sm: 0.8125rem;
+  --text-base: 0.9rem;
+  --text-lg: 1.05rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 2rem;
+
+  --leading-tight: 1.3;
+  --leading-normal: 1.6;
+  --leading-relaxed: 1.75;
+
+  --font-light: 300;
+  --font-regular: 400;
+  --font-medium: 500;
+  --font-semibold: 600;
+  --font-bold: 700;
+
+  /* Spacing */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+
+  /* Radius */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --radius-full: 9999px;
+
+  /* Transitions */
+  --transition-fast: 120ms ease;
+  --transition-base: 200ms ease;
+  --transition-slow: 350ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Layout */
+  --sidebar-width: 280px;
+  --sidebar-collapsed: 0px;
+  --header-height: 52px;
+  --chat-max-width: 780px;
+  --input-max-height: 200px;
+
+  /* Z-Index Scale */
+  --z-sidebar: 100;
+  --z-header: 200;
+  --z-modal: 500;
+  --z-tooltip: 600;
+  --z-notification: 700;
+}
+
+/* ─── Light Theme ─── */
+[data-theme='light'] {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f7f7f8;
+  --bg-tertiary: #ececf0;
+  --bg-elevated: #ffffff;
+  --bg-hover: #e8e8ec;
+  --bg-active: #dddde3;
+  --bg-input: #f0f0f4;
+
+  --text-primary: #1a1a2e;
+  --text-secondary: #6b6b7d;
+  --text-tertiary: #9898a8;
+  --text-inverse: #ffffff;
+
+  --accent: #5b54e6;
+  --accent-hover: #4a43d4;
+  --accent-muted: rgba(91, 84, 230, 0.1);
+  --accent-glow: rgba(91, 84, 230, 0.2);
+
+  --border: rgba(0, 0, 0, 0.06);
+  --border-strong: rgba(0, 0, 0, 0.12);
+  --border-accent: rgba(91, 84, 230, 0.3);
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.12);
+  --shadow-glow: 0 0 20px rgba(91, 84, 230, 0.1);
+}
+
+/* ─── Base Reset ─── */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  color: var(--text-primary);
+  background: var(--bg-primary);
+  overflow: hidden;
+  height: 100vh;
+}
+
+#root {
+  height: 100vh;
+  display: flex;
+}
+
+/* ─── Scrollbar ─── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-tertiary);
+}
+
+/* ─── Focus Styles (Accessibility) ─── */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ─── Button Reset ─── */
+button {
+  font-family: inherit;
+  font-size: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: inherit;
+}
+
+/* ─── Input Reset ─── */
+input,
+textarea,
+select {
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+}
+
+textarea {
+  resize: none;
+}
+
+/* ─── Link Reset ─── */
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* ─── Selection ─── */
+::selection {
+  background: var(--accent-muted);
+  color: var(--text-primary);
+}
+
+/* ─── Utility Classes ─── */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
