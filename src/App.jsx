@@ -33,11 +33,11 @@ function AppLayout() {
     <div className="app-wrapper">
       <Titlebar />
       <div className="app-layout" data-sidebar={sidebarOpen ? 'open' : 'closed'}>
-      <Sidebar isOpen={sidebarOpen} onToggle={() => setSidebarOpen((p) => !p)} />
-      <main className="app-main" role="main" aria-label="Chat area">
-        <ChatView onToggleSidebar={() => setSidebarOpen((p) => !p)} sidebarOpen={sidebarOpen} />
-      </main>
-      {settingsOpen && <Settings onClose={() => setSettingsOpen(false)} />}
+        <Sidebar isOpen={sidebarOpen} onToggle={() => setSidebarOpen((p) => !p)} />
+        <main className="app-main" role="main" aria-label="Chat area">
+          <ChatView onToggleSidebar={() => setSidebarOpen((p) => !p)} sidebarOpen={sidebarOpen} />
+        </main>
+        {settingsOpen && <Settings onClose={() => setSettingsOpen(false)} />}
       </div>
     </div>
   );

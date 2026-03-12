@@ -101,6 +101,7 @@ const anthropicAdapter = {
       { id: 'claude-3-5-sonnet-20241022', name: 'Claude 3.5 Sonnet', contextLength: 200000, pricing: null },
       { id: 'claude-3-5-haiku-20241022', name: 'Claude 3.5 Haiku', contextLength: 200000, pricing: null },
       { id: 'claude-3-opus-20240229', name: 'Claude 3 Opus', contextLength: 200000, pricing: null },
+      { id: 'claude-3-haiku-20240307', name: 'Claude 3 Haiku', contextLength: 200000, pricing: null },
     ];
   },
 

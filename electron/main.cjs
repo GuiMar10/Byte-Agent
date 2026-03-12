@@ -66,7 +66,7 @@ function registerIpcHandlers() {
   ipcMain.on('window:minimize', () => {
     if (mainWindow) mainWindow.minimize();
   });
-  
+
   ipcMain.on('window:maximize', () => {
     if (mainWindow) {
       if (mainWindow.isMaximized()) {
@@ -76,7 +76,7 @@ function registerIpcHandlers() {
       }
     }
   });
-  
+
   ipcMain.on('window:close', () => {
     if (mainWindow) mainWindow.close();
   });

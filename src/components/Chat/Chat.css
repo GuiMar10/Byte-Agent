@@ -383,6 +383,30 @@
   opacity: 0.9;
 }
 
+/* Attach button */
+.chat-input__attach {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-md);
+  flex-shrink: 0;
+  transition: all var(--transition-fast);
+  background: transparent;
+  color: var(--text-secondary);
+}
+
+.chat-input__attach:hover:not(:disabled) {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.chat-input__attach:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
 /* Attachments */
 .chat-input__attachments {
   display: flex;

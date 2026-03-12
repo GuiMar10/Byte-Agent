@@ -9,6 +9,7 @@ export default function ChatInput() {
   const [attachedImages, setAttachedImages] = useState([]);
   const [isDragging, setIsDragging] = useState(false);
   const textareaRef = useRef(null);
+  const fileInputRef = useRef(null);
 
   const handleSend = useCallback(async () => {
     if (!input.trim() && attachedImages.length === 0) return;
@@ -74,6 +75,28 @@ export default function ChatInput() {
     setAttachedImages((prev) => prev.filter((_, i) => i !== index));
   };
 
+  const handleFileSelect = (e) => {
+    const files = Array.from(e.target.files);
+    processFiles(files);
+    e.target.value = '';
+  };
+
+  const processFiles = (files) => {
+    for (const file of files) {
+      if (file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const base64 = reader.result.split(',')[1];
+          setAttachedImages((prev) => [
+            ...prev,
+            { data: base64, mime: file.type, name: file.name },
+          ]);
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+  };
+
   const hasProvider = !!activeProvider;
 
   return (
@@ -102,6 +125,26 @@ export default function ChatInput() {
         )}
 
         <div className="chat-input__row">
+          <button
+            className="chat-input__attach"
+            onClick={() => fileInputRef.current?.click()}
+            aria-label="Attach image"
+            title="Attach image"
+            disabled={!hasProvider}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48" />
+            </svg>
+          </button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            multiple
+            onChange={handleFileSelect}
+            style={{ display: 'none' }}
+            aria-hidden="true"
+          />
           <textarea
             ref={textareaRef}
             className="chat-input__textarea"

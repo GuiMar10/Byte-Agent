@@ -12,7 +12,8 @@
 
 .titlebar-drag-region {
   flex: 1;
-  -webkit-app-region: drag; /* Makewindow draggable */
+  -webkit-app-region: drag;
+  /* Makewindow draggable */
   display: flex;
   align-items: center;
   padding-left: 12px;
@@ -27,7 +28,8 @@
 
 .titlebar-controls {
   display: flex;
-  -webkit-app-region: no-drag; /* Make buttons clickable */
+  -webkit-app-region: no-drag;
+  /* Make buttons clickable */
 }
 
 .titlebar-button {
@@ -59,6 +61,7 @@
 }
 
 .titlebar-close:hover {
-  background-color: #e81123 !important; /* Windows close red */
+  background-color: #e81123 !important;
+  /* Windows close red */
   color: white;
 }
