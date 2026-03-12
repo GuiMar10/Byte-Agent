@@ -253,6 +253,57 @@ export function ConversationProvider({ children }) {
     );
   }, []);
 
+  const editMessage = useCallback(async (messageId, newContent, provider, model, settings) => {
+    const conv = conversations.find((c) => c.id === activeConversationId);
+    if (!conv) return;
+
+    const msgIndex = conv.messages.findIndex((m) => m.id === messageId);
+    if (msgIndex === -1) return;
+
+    const updatedMessages = [...conv.messages];
+    updatedMessages[msgIndex] = { ...updatedMessages[msgIndex], content: newContent };
+
+    const assistantIndex = updatedMessages.findIndex((m, i) => i > msgIndex && m.role === 'assistant');
+    if (assistantIndex !== -1) {
+      updatedMessages.splice(assistantIndex);
+    }
+
+    const updatedConv = { ...conv, messages: updatedMessages, updatedAt: Date.now() };
+    await window.electronAPI.saveConversation(updatedConv);
+    setConversations((prev) => prev.map((c) => (c.id === activeConversationId ? updatedConv : c)));
+
+    const allMessages = [];
+    const systemPrompt = updatedConv.systemPrompt || settings.globalSystemPrompt;
+    if (systemPrompt) {
+      allMessages.push({ role: 'system', content: systemPrompt });
+    }
+    updatedConv.messages.forEach((m) => {
+      allMessages.push({
+        role: m.role,
+        content: m.content,
+        ...(m.images && m.images.length > 0 ? { images: m.images } : {}),
+      });
+    });
+
+    const requestId = uuidv4();
+    requestIdRef.current = requestId;
+    streamingRef.current = '';
+    setStreamingContent('');
+    setIsStreaming(true);
+
+    window.electronAPI.sendChatMessage({
+      requestId,
+      provider,
+      model,
+      messages: allMessages,
+      settings: {
+        temperature: settings.temperature,
+        maxTokens: settings.maxTokens,
+        topP: settings.topP,
+      },
+    });
+  }, [activeConversationId, conversations]);
+
   return (
     <ConversationContext.Provider
       value={{
@@ -269,6 +320,7 @@ export function ConversationProvider({ children }) {
         sendMessage,
         stopGeneration,
         togglePin,
+        editMessage,
       }}
     >
       {children}
