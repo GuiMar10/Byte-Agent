@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
 const ConversationContext = createContext();
@@ -26,6 +26,11 @@ export function ConversationProvider({ children }) {
   const [streamingContent, setStreamingContent] = useState('');
   const streamingRef = useRef('');
   const requestIdRef = useRef(null);
+  const activeConversationIdRef = useRef(null);
+
+  useEffect(() => {
+    activeConversationIdRef.current = activeConversationId;
+  }, [activeConversationId]);
 
   // Load conversations on mount
   useEffect(() => {
@@ -159,7 +164,7 @@ export function ConversationProvider({ children }) {
   }, []);
 
   const sendMessage = useCallback(async (content, images, provider, model, settings) => {
-    let convId = activeConversationId;
+    const convId = activeConversationIdRef.current;
     let conv = conversations.find((c) => c.id === convId);
 
     // Create new conversation if none active
@@ -168,7 +173,6 @@ export function ConversationProvider({ children }) {
       await window.electronAPI.saveConversation(conv);
       setConversations((prev) => [conv, ...prev]);
       setActiveConversationId(conv.id);
-      convId = conv.id;
     }
 
     const userMessage = {
@@ -302,27 +306,27 @@ export function ConversationProvider({ children }) {
         topP: settings.topP,
       },
     });
-  }, [activeConversationId, conversations]);
+  }, [conversations]);
+
+  const contextValue = useMemo(() => ({
+    conversations,
+    activeConversation,
+    activeConversationId,
+    isLoading,
+    isStreaming,
+    streamingContent,
+    newChat,
+    selectConversation,
+    deleteConversation,
+    updateConversation,
+    sendMessage,
+    stopGeneration,
+    togglePin,
+    editMessage,
+  }), [conversations, activeConversation, activeConversationId, isLoading, isStreaming, streamingContent, newChat, selectConversation, deleteConversation, updateConversation, sendMessage, stopGeneration, togglePin, editMessage]);
 
   return (
-    <ConversationContext.Provider
-      value={{
-        conversations,
-        activeConversation,
-        activeConversationId,
-        isLoading,
-        isStreaming,
-        streamingContent,
-        newChat,
-        selectConversation,
-        deleteConversation,
-        updateConversation,
-        sendMessage,
-        stopGeneration,
-        togglePin,
-        editMessage,
-      }}
-    >
+    <ConversationContext.Provider value={contextValue}>
       {children}
     </ConversationContext.Provider>
   );

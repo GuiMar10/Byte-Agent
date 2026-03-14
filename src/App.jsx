@@ -1,12 +1,14 @@
 import { ThemeProvider } from './contexts/ThemeContext.jsx';
 import { ConversationProvider } from './contexts/ConversationContext.jsx';
 import { SettingsProvider, useSettings } from './contexts/SettingsContext.jsx';
+import { lazy, Suspense } from 'react';
 import Sidebar from './components/Sidebar/Sidebar.jsx';
 import ChatView from './components/Chat/ChatView.jsx';
-import Settings from './components/Settings/Settings.jsx';
 import Titlebar from './components/Titlebar/Titlebar.jsx';
 import { useState, useEffect } from 'react';
 import './App.css';
+
+const Settings = lazy(() => import('./components/Settings/Settings.jsx'));
 
 function AppLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -37,7 +39,11 @@ function AppLayout() {
         <main className="app-main" role="main" aria-label="Chat area">
           <ChatView onToggleSidebar={() => setSidebarOpen((p) => !p)} sidebarOpen={sidebarOpen} />
         </main>
-        {settingsOpen && <Settings onClose={() => setSettingsOpen(false)} />}
+        {settingsOpen && (
+          <Suspense fallback={null}>
+            <Settings onClose={() => setSettingsOpen(false)} />
+          </Suspense>
+        )}
       </div>
     </div>
   );

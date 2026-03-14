@@ -1,4 +1,4 @@
-import { memo, useState } from 'react';
+import { memo, useState, useMemo } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
@@ -7,6 +7,50 @@ import rehypeHighlight from 'rehype-highlight';
 import CodeBlock from './CodeBlock.jsx';
 import { useConversations } from '../../contexts/ConversationContext.jsx';
 import { useSettings } from '../../contexts/SettingsContext.jsx';
+
+const markdownComponents = {
+  code({ node, inline, className, children, ...props }) {
+    const match = /language-(\w+)/.exec(className || '');
+    if (!inline && match) {
+      return (
+        <CodeBlock language={match[1]} {...props}>
+          {String(children).replace(/\n$/, '')}
+        </CodeBlock>
+      );
+    }
+    if (!inline) {
+      return (
+        <CodeBlock language="" {...props}>
+          {String(children).replace(/\n$/, '')}
+        </CodeBlock>
+      );
+    }
+    return (
+      <code className="message__inline-code" {...props}>
+        {children}
+      </code>
+    );
+  },
+  p({ children }) {
+    return <p className="message__paragraph">{children}</p>;
+  },
+  ul({ children }) {
+    return <ul className="message__list">{children}</ul>;
+  },
+  ol({ children }) {
+    return <ol className="message__list message__list--ordered">{children}</ol>;
+  },
+  table({ children }) {
+    return (
+      <div className="message__table-wrap">
+        <table className="message__table">{children}</table>
+      </div>
+    );
+  },
+  blockquote({ children }) {
+    return <blockquote className="message__blockquote">{children}</blockquote>;
+  },
+};
 
 const Message = memo(function Message({ message, isStreaming }) {
   const { editMessage, isStreaming: contextIsStreaming } = useConversations();
@@ -94,49 +138,7 @@ const Message = memo(function Message({ message, isStreaming }) {
             <ReactMarkdown
               remarkPlugins={[remarkGfm, remarkMath]}
               rehypePlugins={[rehypeKatex, rehypeHighlight]}
-              components={{
-                code({ node, inline, className, children, ...props }) {
-                  const match = /language-(\w+)/.exec(className || '');
-                  if (!inline && match) {
-                    return (
-                      <CodeBlock language={match[1]} {...props}>
-                        {String(children).replace(/\n$/, '')}
-                      </CodeBlock>
-                    );
-                  }
-                  if (!inline) {
-                    return (
-                      <CodeBlock language="" {...props}>
-                        {String(children).replace(/\n$/, '')}
-                      </CodeBlock>
-                    );
-                  }
-                  return (
-                    <code className="message__inline-code" {...props}>
-                      {children}
-                    </code>
-                  );
-                },
-                p({ children }) {
-                  return <p className="message__paragraph">{children}</p>;
-                },
-                ul({ children }) {
-                  return <ul className="message__list">{children}</ul>;
-                },
-                ol({ children }) {
-                  return <ol className="message__list message__list--ordered">{children}</ol>;
-                },
-                table({ children }) {
-                  return (
-                    <div className="message__table-wrap">
-                      <table className="message__table">{children}</table>
-                    </div>
-                  );
-                },
-                blockquote({ children }) {
-                  return <blockquote className="message__blockquote">{children}</blockquote>;
-                },
-              }}
+              components={markdownComponents}
             >
               {message.content}
             </ReactMarkdown>

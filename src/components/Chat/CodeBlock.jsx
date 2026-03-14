@@ -1,6 +1,6 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, memo } from 'react';
 
-export default function CodeBlock({ language, children, ...props }) {
+const CodeBlock = memo(function CodeBlock({ language, children, ...props }) {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = useCallback(async () => {
@@ -41,4 +41,6 @@ export default function CodeBlock({ language, children, ...props }) {
       </pre>
     </div>
   );
-}
+});
+
+export default CodeBlock;

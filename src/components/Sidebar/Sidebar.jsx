@@ -1,7 +1,35 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, memo, useCallback } from "react";
 import { useConversations } from "../../contexts/ConversationContext.jsx";
 import { useSettings } from "../../contexts/SettingsContext.jsx";
 import "./Sidebar.css";
+
+const ChatItem = memo(function ChatItem({ conv, isActive, onSelect, onContextMenu }) {
+  return (
+    <button
+      className={`sidebar__item ${isActive ? "sidebar__item--active" : ""}`}
+      onClick={onSelect}
+      onContextMenu={onContextMenu}
+      role="listitem"
+      aria-current={isActive ? "true" : undefined}
+      title={conv.title}
+    >
+      <svg
+        className="sidebar__item-icon"
+        width="16"
+        height="16"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+      </svg>
+      <span className="sidebar__item-title">{conv.title}</span>
+    </button>
+  );
+});
 
 export default function Sidebar({ isOpen, onToggle }) {
   const {
@@ -227,30 +255,4 @@ export default function Sidebar({ isOpen, onToggle }) {
   );
 }
 
-function ChatItem({ conv, isActive, onSelect, onContextMenu }) {
-  return (
-    <button
-      className={`sidebar__item ${isActive ? "sidebar__item--active" : ""}`}
-      onClick={onSelect}
-      onContextMenu={onContextMenu}
-      role="listitem"
-      aria-current={isActive ? "true" : undefined}
-      title={conv.title}
-    >
-      <svg
-        className="sidebar__item-icon"
-        width="16"
-        height="16"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      >
-        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-      </svg>
-      <span className="sidebar__item-title">{conv.title}</span>
-    </button>
-  );
-}
+export { ChatItem };

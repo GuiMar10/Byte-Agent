@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 
 const SettingsContext = createContext();
 
@@ -92,24 +92,24 @@ export function SettingsProvider({ children }) {
     }
   }, []);
 
+  const contextValue = useMemo(() => ({
+    settings,
+    providers,
+    activeProvider,
+    activeModel,
+    models,
+    isLoadingModels,
+    settingsOpen,
+    updateSettings,
+    updateProviders,
+    selectProvider,
+    selectModel,
+    fetchModelsForProvider,
+    setSettingsOpen,
+  }), [settings, providers, activeProvider, activeModel, models, isLoadingModels, settingsOpen, updateSettings, updateProviders, selectProvider, selectModel, fetchModelsForProvider]);
+
   return (
-    <SettingsContext.Provider
-      value={{
-        settings,
-        providers,
-        activeProvider,
-        activeModel,
-        models,
-        isLoadingModels,
-        settingsOpen,
-        updateSettings,
-        updateProviders,
-        selectProvider,
-        selectModel,
-        fetchModelsForProvider,
-        setSettingsOpen,
-      }}
-    >
+    <SettingsContext.Provider value={contextValue}>
       {children}
     </SettingsContext.Provider>
   );
