@@ -1,6 +1,6 @@
 {
   "name": "byte",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "description": "A feature-rich AI chat desktop application",
   "main": "electron/main.cjs",
@@ -22,7 +22,9 @@
       "output": "release"
     },
     "linux": {
-      "target": ["AppImage"],
+      "target": [
+        "AppImage"
+      ],
       "category": "Utility"
     }
   },

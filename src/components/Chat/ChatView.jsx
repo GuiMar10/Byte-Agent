@@ -52,28 +52,7 @@ export default function ChatView({ onToggleSidebar, sidebarOpen }) {
         aria-label="Chat messages"
         aria-live="polite"
       >
-        {!activeConversation ? (
-          <div className="chat-empty" role="status">
-            <div className="chat-empty__icon">
-              <svg
-                width="48"
-                height="48"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-              </svg>
-            </div>
-            <h1 className="chat-empty__title">Byte</h1>
-            <p className="chat-empty__subtitle">
-              Start a new conversation or select one from the sidebar
-            </p>
-          </div>
-        ) : activeConversation.messages.length === 0 ? (
+        {!activeConversation || activeConversation.messages.length === 0 ? (
           <div className="chat-empty" role="status">
             <h1
               className="chat-empty__title"
