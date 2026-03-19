@@ -7,9 +7,9 @@ import ModelSelector from "../ModelSelector/ModelSelector.jsx";
 import "./Chat.css";
 
 export default function ChatView({ onToggleSidebar, sidebarOpen }) {
-  const { activeConversation, isStreaming, streamingContent } =
+  const { activeConversation, isStreaming, streamingContent, editMessage } =
     useConversations();
-  const { activeProvider, activeModel } = useSettings();
+  const { activeProvider, activeModel, settings } = useSettings();
   const messagesEndRef = useRef(null);
 
   // Auto-scroll to bottom
@@ -64,7 +64,15 @@ export default function ChatView({ onToggleSidebar, sidebarOpen }) {
         ) : (
           <div className="chat-messages__inner">
             {activeConversation.messages.map((msg) => (
-              <Message key={msg.id} message={msg} />
+              <Message 
+                key={msg.id} 
+                message={msg} 
+                editMessage={editMessage}
+                contextIsStreaming={isStreaming}
+                activeProvider={activeProvider}
+                activeModel={activeModel}
+                settings={settings}
+              />
             ))}
             {isStreaming && streamingContent && (
               <Message
@@ -75,6 +83,11 @@ export default function ChatView({ onToggleSidebar, sidebarOpen }) {
                   timestamp: Date.now(),
                 }}
                 isStreaming
+                editMessage={editMessage}
+                contextIsStreaming={true}
+                activeProvider={activeProvider}
+                activeModel={activeModel}
+                settings={settings}
               />
             )}
             <div ref={messagesEndRef} />

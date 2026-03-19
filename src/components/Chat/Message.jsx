@@ -5,8 +5,6 @@ import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import rehypeHighlight from 'rehype-highlight';
 import CodeBlock from './CodeBlock.jsx';
-import { useConversations } from '../../contexts/ConversationContext.jsx';
-import { useSettings } from '../../contexts/SettingsContext.jsx';
 
 const markdownComponents = {
   code({ node, inline, className, children, ...props }) {
@@ -52,9 +50,15 @@ const markdownComponents = {
   },
 };
 
-const Message = memo(function Message({ message, isStreaming }) {
-  const { editMessage, isStreaming: contextIsStreaming } = useConversations();
-  const { activeProvider, activeModel, settings } = useSettings();
+const Message = memo(function Message({ 
+  message, 
+  isStreaming,
+  editMessage,
+  contextIsStreaming,
+  activeProvider,
+  activeModel,
+  settings
+}) {
   const isUser = message.role === 'user';
   const isSystem = message.role === 'system';
   const [isEditing, setIsEditing] = useState(false);

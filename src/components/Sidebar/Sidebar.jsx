@@ -4,11 +4,14 @@ import { useSettings } from "../../contexts/SettingsContext.jsx";
 import "./Sidebar.css";
 
 const ChatItem = memo(function ChatItem({ conv, isActive, onSelect, onContextMenu }) {
+  const handleClick = useCallback(() => onSelect(conv.id), [onSelect, conv.id]);
+  const handleContext = useCallback((e) => onContextMenu(e, conv), [onContextMenu, conv]);
+
   return (
     <button
       className={`sidebar__item ${isActive ? "sidebar__item--active" : ""}`}
-      onClick={onSelect}
-      onContextMenu={onContextMenu}
+      onClick={handleClick}
+      onContextMenu={handleContext}
       role="listitem"
       aria-current={isActive ? "true" : undefined}
       title={conv.title}
@@ -64,10 +67,10 @@ export default function Sidebar({ isOpen, onToggle }) {
     await newChat(activeModel, settings.globalSystemPrompt);
   };
 
-  const handleContextMenu = (e, conv) => {
+  const handleContextMenu = useCallback((e, conv) => {
     e.preventDefault();
     setContextMenu({ x: e.clientX, y: e.clientY, conv });
-  };
+  }, []);
 
   const closeContextMenu = () => setContextMenu(null);
 
@@ -165,8 +168,8 @@ export default function Sidebar({ isOpen, onToggle }) {
                   key={conv.id}
                   conv={conv}
                   isActive={conv.id === activeConversationId}
-                  onSelect={() => selectConversation(conv.id)}
-                  onContextMenu={(e) => handleContextMenu(e, conv)}
+                  onSelect={selectConversation}
+                  onContextMenu={handleContextMenu}
                 />
               ))}
             </div>
@@ -182,8 +185,8 @@ export default function Sidebar({ isOpen, onToggle }) {
                 key={conv.id}
                 conv={conv}
                 isActive={conv.id === activeConversationId}
-                onSelect={() => selectConversation(conv.id)}
-                onContextMenu={(e) => handleContextMenu(e, conv)}
+                onSelect={selectConversation}
+                onContextMenu={handleContextMenu}
               />
             ))}
           </div>
@@ -254,5 +257,3 @@ export default function Sidebar({ isOpen, onToggle }) {
     </>
   );
 }
-
-export { ChatItem };
