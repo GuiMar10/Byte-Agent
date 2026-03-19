@@ -1,15 +1,17 @@
 import { useState, useCallback, memo } from 'react';
 
-const CodeBlock = memo(function CodeBlock({ language, children, ...props }) {
+const CodeBlock = memo(function CodeBlock({ language, codeString, children, ...props }) {
   const [copied, setCopied] = useState(false);
+
+  const rawCode = codeString !== undefined ? codeString : (typeof children === 'string' ? children : '');
 
   const handleCopy = useCallback(async () => {
     try {
-      await navigator.clipboard.writeText(children);
+      await navigator.clipboard.writeText(rawCode);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch { /* ignore */ }
-  }, [children]);
+  }, [rawCode]);
 
   return (
     <div className="code-block" role="region" aria-label={`Code block${language ? ` in ${language}` : ''}`}>

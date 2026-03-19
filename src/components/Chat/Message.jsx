@@ -6,20 +6,32 @@ import rehypeKatex from 'rehype-katex';
 import rehypeHighlight from 'rehype-highlight';
 import CodeBlock from './CodeBlock.jsx';
 
+const extractText = (node) => {
+  if (node.type === 'text') {
+    return node.value;
+  }
+  if (node.children) {
+    return node.children.map(extractText).join('');
+  }
+  return '';
+};
+
 const markdownComponents = {
   code({ node, inline, className, children, ...props }) {
     const match = /language-(\w+)/.exec(className || '');
+    const codeString = node ? extractText(node).replace(/\n$/, '') : String(children).replace(/\n$/, '');
+    
     if (!inline && match) {
       return (
-        <CodeBlock language={match[1]} {...props}>
-          {String(children).replace(/\n$/, '')}
+        <CodeBlock language={match[1]} codeString={codeString} {...props}>
+          {children}
         </CodeBlock>
       );
     }
     if (!inline) {
       return (
-        <CodeBlock language="" {...props}>
-          {String(children).replace(/\n$/, '')}
+        <CodeBlock language="" codeString={codeString} {...props}>
+          {children}
         </CodeBlock>
       );
     }
