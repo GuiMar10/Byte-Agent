@@ -1,7 +1,7 @@
 import { ThemeProvider } from './contexts/ThemeContext.jsx';
 import { ConversationProvider, useConversations } from './contexts/ConversationContext.jsx';
 import { SettingsProvider, useSettings } from './contexts/SettingsContext.jsx';
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useRef, useCallback } from 'react';
 import Sidebar from './components/Sidebar/Sidebar.jsx';
 import ChatView from './components/Chat/ChatView.jsx';
 import Titlebar from './components/Titlebar/Titlebar.jsx';
@@ -14,11 +14,17 @@ function AppLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const { settingsOpen, setSettingsOpen, settings, activeModel } = useSettings();
   const { newChat } = useConversations();
+  const chatInputRef = useRef(null);
+
+  const focusChatInput = useCallback(() => {
+    chatInputRef.current?.focus();
+  }, []);
 
   // Keyboard shortcuts
   useEffect(() => {
     function handleKeyDown(e) {
       const ctrl = e.ctrlKey || e.metaKey;
+
       if (ctrl && e.key === 'b') {
         e.preventDefault();
         setSidebarOpen((p) => !p);
@@ -31,10 +37,19 @@ function AppLayout() {
         e.preventDefault();
         newChat(activeModel, settings.globalSystemPrompt);
       }
+
+      // Focus ChatInput on typing, unless user is in another input
+      if (!ctrl && !e.altKey && !e.metaKey && e.key.length === 1) {
+        const tag = document.activeElement?.tagName;
+        const isEditable = document.activeElement?.isContentEditable;
+        if (tag !== 'INPUT' && tag !== 'TEXTAREA' && !isEditable) {
+          focusChatInput();
+        }
+      }
     }
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [setSettingsOpen, newChat, activeModel, settings.globalSystemPrompt]);
+  }, [setSettingsOpen, newChat, activeModel, settings.globalSystemPrompt, focusChatInput]);
 
   return (
     <div className="app-wrapper">
@@ -42,7 +57,7 @@ function AppLayout() {
       <div className="app-layout" data-sidebar={sidebarOpen ? 'open' : 'closed'}>
         <Sidebar isOpen={sidebarOpen} onToggle={() => setSidebarOpen((p) => !p)} />
         <main className="app-main" role="main" aria-label="Chat area">
-          <ChatView onToggleSidebar={() => setSidebarOpen((p) => !p)} sidebarOpen={sidebarOpen} />
+          <ChatView onToggleSidebar={() => setSidebarOpen((p) => !p)} sidebarOpen={sidebarOpen} chatInputRef={chatInputRef} />
         </main>
         {settingsOpen && (
           <Suspense fallback={null}>

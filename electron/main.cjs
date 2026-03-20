@@ -10,6 +10,11 @@ let providerManager;
 const activeRequests = new Map();
 
 function createWindow() {
+  const isDev = process.env.NODE_ENV !== 'production' && !app.isPackaged;
+  const iconPath = isDev
+    ? path.join(__dirname, '../public/byte.png')
+    : path.join(__dirname, '../dist/byte.png');
+
   mainWindow = new BrowserWindow({
     width: 1200,
     height: 800,
@@ -17,6 +22,7 @@ function createWindow() {
     minHeight: 500,
     title: 'Byte',
     backgroundColor: '#0a0a0f',
+    icon: iconPath,
     frame: false,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
@@ -25,7 +31,6 @@ function createWindow() {
     },
   });
 
-  const isDev = process.env.NODE_ENV !== 'production' && !app.isPackaged;
   if (isDev) {
     mainWindow.loadURL('http://localhost:5173');
   } else {

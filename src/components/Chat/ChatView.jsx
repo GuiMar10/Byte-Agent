@@ -6,7 +6,7 @@ import ChatInput from "./ChatInput.jsx";
 import ModelSelector from "../ModelSelector/ModelSelector.jsx";
 import "./Chat.css";
 
-export default function ChatView({ onToggleSidebar, sidebarOpen }) {
+export default function ChatView({ onToggleSidebar, sidebarOpen, chatInputRef }) {
   const { activeConversation, isStreaming, streamingContent, editMessage } =
     useConversations();
   const { activeProvider, activeModel, settings } = useSettings();
@@ -96,7 +96,7 @@ export default function ChatView({ onToggleSidebar, sidebarOpen }) {
       </div>
 
       {/* Input */}
-      <ChatInput />
+      <ChatInput ref={chatInputRef} />
     </div>
   );
 }

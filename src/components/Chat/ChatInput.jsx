@@ -1,8 +1,8 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, forwardRef, useImperativeHandle } from 'react';
 import { useConversations } from '../../contexts/ConversationContext.jsx';
 import { useSettings } from '../../contexts/SettingsContext.jsx';
 
-export default function ChatInput() {
+const ChatInput = forwardRef(function ChatInput(props, ref) {
   const { sendMessage, stopGeneration, isStreaming, activeConversation, newChat } = useConversations();
   const { activeProvider, activeModel, settings } = useSettings();
   const [input, setInput] = useState('');
@@ -10,6 +10,10 @@ export default function ChatInput() {
   const [isDragging, setIsDragging] = useState(false);
   const textareaRef = useRef(null);
   const fileInputRef = useRef(null);
+
+  useImperativeHandle(ref, () => ({
+    focus: () => textareaRef.current?.focus(),
+  }));
 
   const handleSend = useCallback(async () => {
     if (!input.trim() && attachedImages.length === 0) return;
@@ -195,4 +199,6 @@ export default function ChatInput() {
       </div>
     </div>
   );
-}
+});
+
+export default ChatInput;
