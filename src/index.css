@@ -8,23 +8,23 @@
 /* ─── CSS Custom Properties ─── */
 :root {
   /* Colors — Dark theme (default) */
-  --bg-primary: #0a0a0f;
-  --bg-secondary: #12121a;
-  --bg-tertiary: #1a1a26;
-  --bg-elevated: #222233;
-  --bg-hover: #2a2a3d;
-  --bg-active: #33334d;
-  --bg-input: #16161f;
+  --bg-primary: #0e0e0e;
+  --bg-secondary: #121212;
+  --bg-tertiary: #1a1a1a;
+  --bg-elevated: #222222;
+  --bg-hover: #2a2a2a;
+  --bg-active: #333333;
+  --bg-input: #161616;
 
   --text-primary: #e8e8ed;
-  --text-secondary: #9898a8;
-  --text-tertiary: #6b6b7d;
-  --text-inverse: #0a0a0f;
+  --text-secondary: #a7a7a7;
+  --text-tertiary: #6e6e6e;
+  --text-inverse: #050505;
 
-  --accent: #6c63ff;
-  --accent-hover: #7b73ff;
-  --accent-muted: rgba(108, 99, 255, 0.15);
-  --accent-glow: rgba(108, 99, 255, 0.3);
+  --accent: #e8e8ed;
+  --accent-hover: #ffffff;
+  --accent-muted: rgba(232, 232, 237, 0.1);
+  --accent-glow: rgba(232, 232, 237, 0.15);
 
   --success: #34d399;
   --warning: #fbbf24;
@@ -32,12 +32,12 @@
 
   --border: rgba(255, 255, 255, 0.06);
   --border-strong: rgba(255, 255, 255, 0.12);
-  --border-accent: rgba(108, 99, 255, 0.4);
+  --border-accent: rgba(232, 232, 237, 0.4);
 
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
   --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
-  --shadow-glow: 0 0 20px rgba(108, 99, 255, 0.15);
+  --shadow-glow: 0 0 20px rgba(232, 232, 237, 0.08);
 
   /* Typography */
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
@@ -105,28 +105,28 @@
   --bg-secondary: #f7f7f8;
   --bg-tertiary: #ececf0;
   --bg-elevated: #ffffff;
-  --bg-hover: #e8e8ec;
+  --bg-hover: #e8e8e8;
   --bg-active: #dddde3;
   --bg-input: #f0f0f4;
 
-  --text-primary: #1a1a2e;
-  --text-secondary: #6b6b7d;
-  --text-tertiary: #9898a8;
+  --text-primary: #1a1a1a;
+  --text-secondary: #6b6b6b;
+  --text-tertiary: #989898;
   --text-inverse: #ffffff;
 
-  --accent: #5b54e6;
-  --accent-hover: #4a43d4;
-  --accent-muted: rgba(91, 84, 230, 0.1);
-  --accent-glow: rgba(91, 84, 230, 0.2);
+  --accent: #1a1a2e;
+  --accent-hover: #0a0a0f;
+  --accent-muted: rgba(26, 26, 46, 0.08);
+  --accent-glow: rgba(26, 26, 46, 0.1);
 
   --border: rgba(0, 0, 0, 0.06);
   --border-strong: rgba(0, 0, 0, 0.12);
-  --border-accent: rgba(91, 84, 230, 0.3);
+  --border-accent: rgba(26, 26, 46, 0.3);
 
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.06);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
   --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.12);
-  --shadow-glow: 0 0 20px rgba(91, 84, 230, 0.1);
+  --shadow-glow: 0 0 20px rgba(232, 232, 237, 0.1);
 }
 
 /* ─── Base Reset ─── */

@@ -81,6 +81,9 @@ async function createStore() {
     deleteConversation(id) {
       store.delete(`conversations.${id}`);
     },
+    deleteAllConversations() {
+      store.set('conversations', {});
+    },
     exportConversations() {
       return store.get('conversations', {});
     },

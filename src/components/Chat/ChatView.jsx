@@ -7,14 +7,14 @@ import ModelSelector from "../ModelSelector/ModelSelector.jsx";
 import "./Chat.css";
 
 export default function ChatView({ onToggleSidebar, sidebarOpen, chatInputRef }) {
-  const { activeConversation, isStreaming, streamingContent, editMessage } =
+  const { activeConversation, isStreaming, streamingContent, streamingThinking, editMessage } =
     useConversations();
   const { activeProvider, activeModel, settings } = useSettings();
   const messagesEndRef = useRef(null);
 
   // Auto-scroll to bottom
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    messagesEndRef.current?.scrollIntoView({ behavior: "auto" });
   }, [activeConversation?.messages?.length, streamingContent]);
 
   return (
@@ -80,6 +80,7 @@ export default function ChatView({ onToggleSidebar, sidebarOpen, chatInputRef })
                   id: "streaming",
                   role: "assistant",
                   content: streamingContent,
+                  thinking: streamingThinking,
                   timestamp: Date.now(),
                 }}
                 isStreaming

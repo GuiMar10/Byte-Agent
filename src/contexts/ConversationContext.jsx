@@ -24,7 +24,9 @@ export function ConversationProvider({ children }) {
   const [isLoading, setIsLoading] = useState(true);
   const [isStreaming, setIsStreaming] = useState(false);
   const [streamingContent, setStreamingContent] = useState('');
+  const [streamingThinking, setStreamingThinking] = useState('');
   const streamingRef = useRef('');
+  const streamingThinkingRef = useRef('');
   const requestIdRef = useRef(null);
   const activeConversationIdRef = useRef(null);
 
@@ -61,14 +63,23 @@ export function ConversationProvider({ children }) {
       }
     });
 
+    const offThinking = window.electronAPI.onChatThinking(({ requestId, thinking }) => {
+      if (requestId === requestIdRef.current) {
+        streamingThinkingRef.current += thinking;
+        setStreamingThinking(streamingThinkingRef.current);
+      }
+    });
+
     const offDone = window.electronAPI.onChatDone(({ requestId, aborted }) => {
       if (requestId === requestIdRef.current) {
         if (!aborted && streamingRef.current) {
           // Finalize the message
-          finalizeAssistantMessage(streamingRef.current);
+          finalizeAssistantMessage(streamingRef.current, streamingThinkingRef.current);
         }
         streamingRef.current = '';
+        streamingThinkingRef.current = '';
         setStreamingContent('');
+        setStreamingThinking('');
         setIsStreaming(false);
         requestIdRef.current = null;
       }
@@ -76,20 +87,22 @@ export function ConversationProvider({ children }) {
 
     const offError = window.electronAPI.onChatError(({ requestId, error }) => {
       if (requestId === requestIdRef.current) {
-        finalizeAssistantMessage(`⚠️ Error: ${error}`);
+        finalizeAssistantMessage(`⚠️ Error: ${error}`, '');
         streamingRef.current = '';
+        streamingThinkingRef.current = '';
         setStreamingContent('');
+        setStreamingThinking('');
         setIsStreaming(false);
         requestIdRef.current = null;
       }
     });
 
-    return () => { offChunk(); offDone(); offError(); };
+    return () => { offChunk(); offThinking(); offDone(); offError(); };
   }, [activeConversationId]);
 
   const activeConversation = conversations.find((c) => c.id === activeConversationId) || null;
 
-  const finalizeAssistantMessage = useCallback((content) => {
+  const finalizeAssistantMessage = useCallback((content, thinking = '') => {
     setConversations((prev) => {
       const convId = requestIdRef.current ? prev.find(c => c.id === (activeConversationId))?.id : null;
       if (!convId && !activeConversationId) return prev;
@@ -103,6 +116,7 @@ export function ConversationProvider({ children }) {
               id: uuidv4(),
               role: 'assistant',
               content,
+              thinking: thinking || undefined,
               timestamp: Date.now(),
             },
           ],
@@ -164,12 +178,13 @@ export function ConversationProvider({ children }) {
   }, []);
 
   const sendMessage = useCallback(async (content, images, provider, model, settings) => {
-    const convId = activeConversationIdRef.current;
+    let convId = activeConversationIdRef.current;
     let conv = conversations.find((c) => c.id === convId);
 
     // Create new conversation if none active
     if (!conv) {
       conv = createNewConversation(model);
+      convId = conv.id; // Update convId to the new conversation's ID
       await window.electronAPI.saveConversation(conv);
       setConversations((prev) => [conv, ...prev]);
       setActiveConversationId(conv.id);
@@ -217,7 +232,9 @@ export function ConversationProvider({ children }) {
     const requestId = uuidv4();
     requestIdRef.current = requestId;
     streamingRef.current = '';
+    streamingThinkingRef.current = '';
     setStreamingContent('');
+    setStreamingThinking('');
     setIsStreaming(true);
 
     window.electronAPI.sendChatMessage({
@@ -230,6 +247,7 @@ export function ConversationProvider({ children }) {
         maxTokens: settings.maxTokens,
         topP: settings.topP,
       },
+      enableTools: true,
     });
   }, [activeConversationId, conversations]);
 
@@ -237,10 +255,12 @@ export function ConversationProvider({ children }) {
     if (requestIdRef.current) {
       window.electronAPI.stopGeneration(requestIdRef.current);
       if (streamingRef.current) {
-        finalizeAssistantMessage(streamingRef.current);
+        finalizeAssistantMessage(streamingRef.current, streamingThinkingRef.current);
       }
       streamingRef.current = '';
+      streamingThinkingRef.current = '';
       setStreamingContent('');
+      setStreamingThinking('');
       setIsStreaming(false);
       requestIdRef.current = null;
     }
@@ -292,7 +312,9 @@ export function ConversationProvider({ children }) {
     const requestId = uuidv4();
     requestIdRef.current = requestId;
     streamingRef.current = '';
+    streamingThinkingRef.current = '';
     setStreamingContent('');
+    setStreamingThinking('');
     setIsStreaming(true);
 
     window.electronAPI.sendChatMessage({
@@ -308,6 +330,11 @@ export function ConversationProvider({ children }) {
     });
   }, [conversations]);
 
+  const clearConversations = useCallback(() => {
+    setConversations([]);
+    setActiveConversationId(null);
+  }, []);
+
   const contextValue = useMemo(() => ({
     conversations,
     activeConversation,
@@ -315,15 +342,17 @@ export function ConversationProvider({ children }) {
     isLoading,
     isStreaming,
     streamingContent,
+    streamingThinking,
     newChat,
     selectConversation,
     deleteConversation,
+    clearConversations,
     updateConversation,
     sendMessage,
     stopGeneration,
     togglePin,
     editMessage,
-  }), [conversations, activeConversation, activeConversationId, isLoading, isStreaming, streamingContent, newChat, selectConversation, deleteConversation, updateConversation, sendMessage, stopGeneration, togglePin, editMessage]);
+  }), [conversations, activeConversation, activeConversationId, isLoading, isStreaming, streamingContent, streamingThinking, newChat, selectConversation, deleteConversation, clearConversations, updateConversation, sendMessage, stopGeneration, togglePin, editMessage]);
 
   return (
     <ConversationContext.Provider value={contextValue}>

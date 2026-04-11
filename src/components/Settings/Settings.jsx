@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useSettings } from '../../contexts/SettingsContext.jsx';
 import { useTheme } from '../../contexts/ThemeContext.jsx';
+import { useConversations } from '../../contexts/ConversationContext.jsx';
 import { v4 as uuidv4 } from 'uuid';
 import './Settings.css';
 
@@ -333,6 +334,8 @@ function SystemPromptTab() {
 
 function DataTab() {
   const [importStatus, setImportStatus] = useState('');
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const { conversations, selectConversation, clearConversations } = useConversations();
 
   const handleExport = async () => {
     try {
@@ -364,6 +367,20 @@ function DataTab() {
     }
   };
 
+  const handleDeleteAll = async () => {
+    try {
+      await window.electronAPI.deleteAllConversations();
+      clearConversations();
+      setShowDeleteConfirm(false);
+      setImportStatus('All conversations deleted successfully!');
+      setTimeout(() => setImportStatus(''), 3000);
+    } catch (err) {
+      console.error('Delete all failed:', err);
+      setImportStatus('Failed to delete conversations');
+      setTimeout(() => setImportStatus(''), 3000);
+    }
+  };
+
   return (
     <div className="settings-tab">
       <h3>Data & Privacy</h3>
@@ -381,8 +398,35 @@ function DataTab() {
         </label>
       </div>
 
+      <div className="data-actions" style={{ marginTop: '24px' }}>
+        <button
+          className="settings-btn settings-btn--secondary"
+          onClick={() => setShowDeleteConfirm(true)}
+          disabled={conversations.length === 0}
+        >
+          Delete All Chats
+        </button>
+      </div>
+
       {importStatus && (
         <div className="settings-status" role="status">{importStatus}</div>
+      )}
+
+      {showDeleteConfirm && (
+        <div className="settings-confirm-overlay" onClick={() => setShowDeleteConfirm(false)}>
+          <div className="settings-confirm-dialog" onClick={(e) => e.stopPropagation()}>
+            <h4>Delete All Chats?</h4>
+            <p>This action cannot be undone. All {conversations.length} conversation(s) will be permanently deleted.</p>
+            <div className="settings-confirm-actions">
+              <button className="settings-btn" onClick={() => setShowDeleteConfirm(false)}>
+                Cancel
+              </button>
+              <button className="settings-btn settings-btn--secondary" onClick={handleDeleteAll}>
+                Delete All
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

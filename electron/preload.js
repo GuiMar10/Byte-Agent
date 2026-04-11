@@ -6,6 +6,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   getConversation: (id) => ipcRenderer.invoke('store:getConversation', id),
   saveConversation: (conv) => ipcRenderer.invoke('store:saveConversation', conv),
   deleteConversation: (id) => ipcRenderer.invoke('store:deleteConversation', id),
+  deleteAllConversations: () => ipcRenderer.invoke('store:deleteAllConversations'),
   exportConversations: () => ipcRenderer.invoke('store:exportConversations'),
   importConversations: (data) => ipcRenderer.invoke('store:importConversations', data),
 
@@ -37,6 +38,11 @@ contextBridge.exposeInMainWorld('electronAPI', {
     ipcRenderer.on('api:chat:chunk', handler);
     return () => ipcRenderer.removeListener('api:chat:chunk', handler);
   },
+  onChatThinking: (callback) => {
+    const handler = (_, data) => callback(data);
+    ipcRenderer.on('api:chat:thinking', handler);
+    return () => ipcRenderer.removeListener('api:chat:thinking', handler);
+  },
   onChatDone: (callback) => {
     const handler = (_, data) => callback(data);
     ipcRenderer.on('api:chat:done', handler);
@@ -50,4 +56,10 @@ contextBridge.exposeInMainWorld('electronAPI', {
 
   // Files
   readFileAsBase64: (filePath) => ipcRenderer.invoke('files:readAsBase64', filePath),
+
+  // Terminal
+  executeTerminal: (command, cwd) => ipcRenderer.invoke('terminal:execute', { command, cwd }),
+
+  // Tools
+  getToolDefinitions: () => ipcRenderer.invoke('api:getToolDefinitions'),
 });

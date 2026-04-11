@@ -3,7 +3,7 @@ import { useConversations } from '../../contexts/ConversationContext.jsx';
 import { useSettings } from '../../contexts/SettingsContext.jsx';
 
 const ChatInput = forwardRef(function ChatInput(props, ref) {
-  const { sendMessage, stopGeneration, isStreaming, activeConversation, newChat } = useConversations();
+  const { sendMessage, stopGeneration, isStreaming } = useConversations();
   const { activeProvider, activeModel, settings } = useSettings();
   const [input, setInput] = useState('');
   const [attachedImages, setAttachedImages] = useState([]);
@@ -25,14 +25,8 @@ const ChatInput = forwardRef(function ChatInput(props, ref) {
     setAttachedImages([]);
     if (textareaRef.current) textareaRef.current.style.height = 'auto';
 
-    if (!activeConversation) {
-      await newChat(activeModel, settings.globalSystemPrompt);
-      // Wait a tick for state to update
-      await new Promise((r) => setTimeout(r, 50));
-    }
-
     await sendMessage(content, images, activeProvider, activeModel, settings);
-  }, [input, attachedImages, activeProvider, activeModel, settings, sendMessage, activeConversation, newChat]);
+  }, [input, attachedImages, activeProvider, activeModel, settings, sendMessage]);
 
   const handleKeyDown = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {

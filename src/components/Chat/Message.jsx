@@ -76,6 +76,8 @@ const Message = memo(function Message({
   const [isEditing, setIsEditing] = useState(false);
   const [editContent, setEditContent] = useState(message.content);
   const [copied, setCopied] = useState(false);
+  const [thinkingExpanded, setThinkingExpanded] = useState(false);
+  const hasThinking = message.thinking && message.thinking.length > 0;
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(message.content);
@@ -116,22 +118,29 @@ const Message = memo(function Message({
       role="article"
       aria-label={`${message.role} message`}
     >
-      <div className="message__avatar" aria-hidden="true">
-        {isUser ? (
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
-          </svg>
-        ) : (
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z" />
-          </svg>
-        )}
-      </div>
       <div className="message__content">
-        <div className="message__role">
-          {isUser ? 'You' : isSystem ? 'System' : 'Assistant'}
-        </div>
-        <div className="message__body">
+        {hasThinking && (
+          <div className="message__thinking">
+            <button
+              className="message__thinking-toggle"
+              onClick={() => setThinkingExpanded(!thinkingExpanded)}
+              aria-expanded={thinkingExpanded}
+            >
+              <span className={`message__thinking-icon ${thinkingExpanded ? 'message__thinking-icon--expanded' : ''}`}>
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </span>
+              <span className="message__thinking-label">Thinking</span>
+            </button>
+            <div className={`message__thinking-content ${thinkingExpanded ? 'message__thinking-content--expanded' : ''}`}>
+              <div className="message__thinking-text">
+                {message.thinking}
+              </div>
+            </div>
+          </div>
+        )}
+        <div className={`message__body ${isEditing ? 'message__body--editing' : ''}`}>
           {isEditing ? (
             <div className="message__edit">
               <textarea

@@ -1,7 +1,7 @@
 .titlebar {
   display: flex;
   height: 30px;
-  background-color: var(--bg-primary, #0a0a0f);
+  background-color: var(--bg-primary, #050505);
   color: var(--text-primary, #ffffff);
   user-select: none;
   border-bottom: 1px solid var(--border);
